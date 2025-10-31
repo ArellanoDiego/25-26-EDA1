@@ -1,17 +1,20 @@
+package evaluaciones.retos.Reto004;
+
 public class ListaPorBloquesEnteros {
 
     private Bloque[] bloques;
     private int numBloques;
-    private int totalElementos;
     private final int capacidadBloque;
+    private int totalElementos;
 
     public ListaPorBloquesEnteros(int capacidadBloque) {
         if (capacidadBloque <= 0)
-            throw new IllegalArgumentException("La capacidad del bloque debe ser mayor que 0.");
+            throw new IllegalArgumentException("La capacidad debe ser mayor que 0.");
+
         this.capacidadBloque = capacidadBloque;
-        this.bloques = new Bloque[4];
-        this.numBloques = 1;
+        this.bloques = new Bloque[4];       
         this.bloques[0] = new Bloque(capacidadBloque);
+        this.numBloques = 1;
         this.totalElementos = 0;
     }
 
@@ -21,30 +24,29 @@ public class ListaPorBloquesEnteros {
             agregarNuevoBloque();
             ultimo = bloques[numBloques - 1];
         }
-        ultimo.agregarAlFinal(elemento);
+        ultimo.agregar(elemento);
         totalElementos++;
     }
 
     public void eliminarEn(int posicion) {
         validarRango(posicion);
         Localizacion loc = localizar(posicion);
-        bloques[loc.idxBloque].eliminarEn(loc.offset);
+        bloques[loc.idxBloque].eliminar(loc.offset);
 
-        // Pasar elementos de los bloques siguientes hacia atrás
         for (int i = loc.idxBloque; i < numBloques - 1; i++) {
             Bloque actual = bloques[i];
             Bloque siguiente = bloques[i + 1];
             if (!siguiente.estaVacio()) {
-                int movido = siguiente.eliminarPrimero();
-                actual.agregarAlFinal(movido);
+                int valor = siguiente.obtener(0);
+                siguiente.eliminar(0);
+                actual.agregar(valor);
             }
         }
 
-        // Si el último bloque queda vacío, se elimina
-        Bloque ultimo = bloques[numBloques - 1];
-        if (ultimo.estaVacio() && numBloques > 1) {
+        if (bloques[numBloques - 1].estaVacio() && numBloques > 1) {
             bloques[--numBloques] = null;
         }
+
         totalElementos--;
     }
 
@@ -70,28 +72,26 @@ public class ListaPorBloquesEnteros {
 
     public void limpiar() {
         bloques = new Bloque[4];
-        numBloques = 1;
         bloques[0] = new Bloque(capacidadBloque);
+        numBloques = 1;
         totalElementos = 0;
     }
 
     public int[] aArray() {
         int[] resultado = new int[totalElementos];
-        int k = 0;
+        int pos = 0;
         for (int i = 0; i < numBloques; i++) {
             int[] datos = bloques[i].obtenerDatos();
-            for (int valor : datos) {
-                resultado[k++] = valor;
-            }
+            for (int valor : datos) resultado[pos++] = valor;
         }
         return resultado;
     }
 
     public void mostrarEstructura() {
-        System.out.println("Total = " + totalElementos + " | Bloques = " + numBloques);
+        System.out.println("Total elementos: " + totalElementos + " | Bloques usados: " + numBloques);
         for (int i = 0; i < numBloques; i++) {
             int[] datos = bloques[i].obtenerDatos();
-            System.out.print("Bloque " + i + " (" + datos.length + "/" + capacidadBloque + "): [");
+            System.out.print("Bloque " + i + ": [");
             for (int j = 0; j < datos.length; j++) {
                 System.out.print(datos[j]);
                 if (j < datos.length - 1) System.out.print(", ");
@@ -99,6 +99,7 @@ public class ListaPorBloquesEnteros {
             System.out.println("]");
         }
     }
+
 
     private void agregarNuevoBloque() {
         if (numBloques == bloques.length) {
@@ -119,16 +120,17 @@ public class ListaPorBloquesEnteros {
         int acumulado = 0;
         for (int i = 0; i < numBloques; i++) {
             int tam = bloques[i].usados();
-            if (pos < acumulado + tam)
+            if (pos < acumulado + tam) {
                 return new Localizacion(i, pos - acumulado);
+            }
             acumulado += tam;
         }
-        throw new IllegalStateException("No se pudo localizar la posición " + pos);
+        throw new IllegalStateException("No se encontró la posición: " + pos);
     }
 
-    private static final class Localizacion {
-        final int idxBloque;
-        final int offset;
+    private static class Localizacion {
+        int idxBloque;
+        int offset;
         Localizacion(int idxBloque, int offset) {
             this.idxBloque = idxBloque;
             this.offset = offset;
