@@ -1,6 +1,18 @@
+
 public class Main {
+    private static void imprimir(ListaUsandoArraySimulado lista) {
+        System.out.print("[");
+        int i = 0;
+        while (i < lista.size()) {
+            System.out.print(lista.get(i));
+            if (i < lista.size() - 1) System.out.print(", ");
+            i++;
+        }
+        System.out.println("]");
+    }
+
     public static void main(String[] args) {
-        System.out.println("=== Simulación: Lista sobre ArraySimulado ===");
+        System.out.println("=== Lista sobre ArraySimulado (PRG2) ===");
 
         ListaUsandoArraySimulado lista = new ListaUsandoArraySimulado();
 
@@ -9,36 +21,29 @@ public class Main {
         lista.add(30);
         lista.add(40);
         lista.add(50);
-        System.out.println("Lista inicial:");
+        System.out.println("Inicial:");
         imprimir(lista);
 
         lista.add(2, 25);
-        System.out.println("\nTras insertar 25 en la posición 2:");
+        System.out.println("Tras insertar 25 en pos 2:");
         imprimir(lista);
 
-        lista.remove(4);
-        System.out.println("\nTras eliminar el elemento en posición 4:");
+        lista.remove(4); 
+        System.out.println("Tras eliminar en pos 4:");
         imprimir(lista);
 
-        lista.set(1, 200);
-        System.out.println("\nTras modificar el elemento en posición 1:");
+        lista.set(1, 200); 
+        System.out.println("Tras set(1, 200):");
         imprimir(lista);
 
-        System.out.println("\nAgregando más elementos para forzar crecimiento...");
-        for (int i = 60; i <= 200; i += 20) {
-            lista.add(i);
+        int v = 60;
+        while (v <= 200) {
+            lista.add(v);
+            v += 20;
         }
+        System.out.println("Tras crecer automáticamente:");
         imprimir(lista);
 
-        System.out.println("\n=== Fin de la simulación ===");
-    }
-
-    private static void imprimir(ListaUsandoArraySimulado lista) {
-        System.out.print("[");
-        for (int i = 0; i < lista.size(); i++) {
-            System.out.print(lista.get(i));
-            if (i < lista.size() - 1) System.out.print(", ");
-        }
-        System.out.println("]");
+        System.out.println("=== Fin ===");
     }
 }

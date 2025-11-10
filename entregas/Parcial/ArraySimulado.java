@@ -1,38 +1,47 @@
 
 public class ArraySimulado {
-    private static final class Nodo {
-        int dato;
-        Nodo sig;
-        Nodo(int d) { this.dato = d; }
-    }
-
-    private final int length;
-    private final Nodo cabeza; 
+    private int length;
+    private Nodo cabeza;
 
     public ArraySimulado(int length) {
-        if (length < 0) throw new IllegalArgumentException("length < 0");
+        if (length < 0) length = 0;
         this.length = length;
         Nodo prev = null;
-        Nodo first = null;
         for (int i = 0; i < length; i++) {
             Nodo n = new Nodo(0);
-            if (first == null) first = n;
-            if (prev != null) prev.sig = n;
+            if (i == 0) {
+                cabeza = n;
+            } else {
+                prev.sig = n;
+            }
             prev = n;
         }
-        this.cabeza = first;
     }
 
-    public int length() { return length; }
+    public int length() {
+        return length;
+    }
 
     private Nodo nodoEn(int i) {
-        if (i < 0 || i >= length) throw new IndexOutOfBoundsException(i + " ∉ [0," + (length-1) + "]");
+        if (i < 0 || i >= length) return null;
         Nodo cur = cabeza;
-        for (int k = 0; k < i; k++) cur = cur.sig;
+        int k = 0;
+        while (k < i && cur != null) {
+            cur = cur.sig;
+            k++;
+        }
         return cur;
     }
 
-    public int get(int index) { return nodoEn(index).dato; }
+    public int get(int index) {
+        Nodo n = nodoEn(index);
+        if (n == null) return 0;
+        return n.dato;
+    }
 
-    public void set(int index, int value) { nodoEn(index).dato = value; }
+    public void set(int index, int value) {
+        Nodo n = nodoEn(index);
+        if (n == null) return;
+        n.dato = value;
+    }
 }

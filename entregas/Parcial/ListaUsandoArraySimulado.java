@@ -1,7 +1,7 @@
 
 public class ListaUsandoArraySimulado {
     private ArraySimulado datos;
-    private int size; 
+    private int size;
 
     public ListaUsandoArraySimulado() {
         this.datos = new ArraySimulado(10); 
@@ -12,39 +12,43 @@ public class ListaUsandoArraySimulado {
     public boolean isEmpty() { return size == 0; }
 
     public int get(int index) {
-        checkIndex(index);
+        if (index < 0 || index >= size) return 0;
         return datos.get(index);
     }
 
     public void set(int index, int value) {
-        checkIndex(index);
+        if (index < 0 || index >= size) return;
         datos.set(index, value);
     }
 
-    public void add(int value) { 
+    public void add(int value) {
         ensureCapacity(size + 1);
         datos.set(size, value);
         size++;
     }
 
     public void add(int index, int value) { 
-        if (index < 0 || index > size) throw new IndexOutOfBoundsException(index + " ∉ [0," + size + "]");
+        if (index < 0 || index > size) return;
         ensureCapacity(size + 1);
         
-        for (int i = size - 1; i >= index; i--) {
+        int i = size - 1;
+        while (i >= index) {
             int v = datos.get(i);
             datos.set(i + 1, v);
+            i--;
         }
         datos.set(index, value);
         size++;
     }
 
     public int remove(int index) {
-        checkIndex(index);
+        if (index < 0 || index >= size) return 0;
         int old = datos.get(index);
-        for (int i = index + 1; i < size; i++) {
+        int i = index + 1;
+        while (i < size) {
             int v = datos.get(i);
             datos.set(i - 1, v);
+            i++;
         }
         size--;
         if (size < capacidad()) datos.set(size, 0);
@@ -53,17 +57,19 @@ public class ListaUsandoArraySimulado {
 
     private void ensureCapacity(int minCap) {
         if (minCap <= capacidad()) return;
-        int newCap = Math.max(minCap, (capacidad() * 3) / 2 + 1);
-        ArraySimulado nuevo = new ArraySimulado(newCap);
-        for (int i = 0; i < size; i++) {
+        int cap = capacidad();
+        int nueva = cap * 2;
+        if (nueva < minCap) nueva = minCap;
+        if (nueva <= 0) nueva = 1;
+
+        ArraySimulado nuevo = new ArraySimulado(nueva);
+        int i = 0;
+        while (i < size) {
             nuevo.set(i, datos.get(i));
+            i++;
         }
         datos = nuevo;
     }
 
     private int capacidad() { return datos.length(); }
-
-    private void checkIndex(int i) {
-        if (i < 0 || i >= size) throw new IndexOutOfBoundsException(i + " ∉ [0," + (size-1) + "]");
-    }
 }
